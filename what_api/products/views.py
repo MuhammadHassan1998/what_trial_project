@@ -29,7 +29,7 @@ class LoginView(APIView):
         
         if user and user.check_password(password):
             refresh = RefreshToken.for_user(user)
-            return Response({'refresh': str(refresh), 'access': str(refresh.access_token)})
+            return Response({'username': username, 'email': user.email, 'refresh': str(refresh), 'access': str(refresh.access_token)})
         
         return Response({'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -85,7 +85,7 @@ class SelectProductView(APIView):
     def post(self, request, pk):
         try:
             product = Product.objects.get(pk=pk)
-            product.selected = True
+            product.selected = not product.selected
             product.save()
             return Response({'status': 'Product selected'})
         except Product.DoesNotExist:
@@ -93,11 +93,14 @@ class SelectProductView(APIView):
 
 
 class LogoutView(APIView):
-    """
-    API view to handle user logout.
-    """
-    permission_classes = [IsAuthenticated]
+    permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
-        request.auth.delete()
-        return Response({'status': 'Logout successful'})
+    def post(self, request, *args, **kwargs):
+        try:
+            refresh_token = request.data.get("refresh_token")
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            print(e)
+            return Response(status=status.HTTP_400_BAD_REQUEST)
