@@ -32,7 +32,6 @@ const DataTable = () => {
   const [rowSelection, setRowSelection] = useState({});
 
   const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
   const debouncedSearchQuery = useDebounce(searchQuery, 500);
@@ -78,10 +77,8 @@ const DataTable = () => {
             },
           );
           setProducts(response.data.results);
-          setLoading(false);
         } catch (error) {
           console.error("Failed to fetch products:", error);
-          setLoading(false);
         }
       };
 
