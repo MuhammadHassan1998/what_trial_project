@@ -1,0 +1,15 @@
+{
+    "name": "What Trial Project",
+    "cloud": "aws",
+    "region": "us-east-1",
+    "type": "webapp",
+    "runtime": "python3.12",
+    "addons": [],
+    "env": {
+      "default": {
+        "DJANGO_SETTINGS_MODULE": "what_api.settings",
+        "PYTHONUNBUFFERED": "1"
+      }
+    }
+  }
+  
