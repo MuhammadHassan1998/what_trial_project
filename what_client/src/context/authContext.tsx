@@ -8,7 +8,7 @@ import {
   useEffect,
 } from "react";
 
-import { AuthContextType, User } from "@/types";
+import { AuthContextType, FormData, User } from "@/types";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 

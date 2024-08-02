@@ -21,6 +21,9 @@ import { Table } from "@/components/ui/table";
 import { Product, ProductsApiResponse } from "@/types";
 import axios from "axios";
 import { useAuth } from "@/context/authContext";
+import { Input } from "../ui/input";
+import { useDebounce } from "@/hooks/useDebounce";
+
 const DataTable = () => {
   const { user } = useAuth();
   const [sorting, setSorting] = useState<SortingState>([]);
@@ -30,6 +33,9 @@ const DataTable = () => {
 
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+
+  const debouncedSearchQuery = useDebounce(searchQuery, 500);
 
   const table = useReactTable({
     data: products,
@@ -60,6 +66,15 @@ const DataTable = () => {
               headers: {
                 Authorization: `Bearer ${user?.accessToken}`,
               },
+              params: {
+                query: debouncedSearchQuery,
+                sortBy: sorting.length ? sorting[0].id : undefined,
+                sortOrder: sorting.length
+                  ? sorting[0].desc
+                    ? "desc"
+                    : "asc"
+                  : undefined,
+              },
             },
           );
           setProducts(response.data.results);
@@ -72,13 +87,20 @@ const DataTable = () => {
 
       fetchProducts();
     }
-  }, [user]);
+  }, [user, debouncedSearchQuery, sorting]);
 
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
 
   return (
     <div>
       <div className="flex items-center py-4">
-        {/* <FilterInput table={table} /> */}
+        <Input
+          value={searchQuery}
+          onChange={handleSearchChange}
+          placeholder="Search the product"
+        />
       </div>
       <div className="rounded-md border">
         <Table>

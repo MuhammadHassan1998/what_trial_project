@@ -1,27 +1,27 @@
-// columns.ts
 import { ColumnDef } from "@tanstack/react-table";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Product } from "@/types";
 import axios from "axios";
 import { useAuth } from "@/context/authContext";
 import { useState } from "react";
+import { SortAsc } from "lucide-react";
 
 export const columns: ColumnDef<Product>[] = [
   {
     accessorKey: "selected",
     id: "selected",
-    header: () => (
-       null
-    ),
+    header: () => null,
     cell: ({ row }) => {
       const { user } = useAuth();
-      const [checked, setChecked]=useState(row.getIsSelected() || row["original"].selected)
+      const [checked, setChecked] = useState(
+        row.getIsSelected() || row["original"].selected,
+      );
       return (
         <Checkbox
           checked={checked}
           onCheckedChange={async (value) => {
             const isSelected = !!value;
-             setChecked(!checked)
+            setChecked(!checked);
             const id = row.original.id;
             try {
               await axios.post(
@@ -47,19 +47,49 @@ export const columns: ColumnDef<Product>[] = [
   },
   {
     accessorKey: "name",
-    header: "Name",
+    header: ({ column }) => {
+      return (
+        <div
+          className="capitalize cursor-pointer flex items-center  gap-2"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Name
+          <SortAsc className="w-4 h-4"/>
+        </div>
+      );
+    },
     cell: ({ row }) => <div className="capitalize">{row.getValue("name")}</div>,
   },
   {
     accessorKey: "description",
-    header: "Description",
+    header: ({ column }) => {
+      return (
+        <div
+          className="capitalize cursor-pointer flex items-center  gap-2"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Description
+          <SortAsc className="w-4 h-4"/>
+        </div>
+      );
+    },
     cell: ({ row }) => (
       <div className="lowercase">{row.getValue("description")}</div>
     ),
   },
   {
     accessorKey: "price",
-    header: () => <div className="text-right">Amount</div>,
+    header: ({ column }) => {
+      return (
+        <div
+          className="capitalize cursor-pointer flex items-center  gap-2"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Price
+          <SortAsc className="w-4 h-4"/>
+        </div>
+      );
+    },
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("price"));
 
@@ -69,22 +99,31 @@ export const columns: ColumnDef<Product>[] = [
         currency: "USD",
       }).format(amount);
 
-      return <div className="text-right font-medium">{formatted}</div>;
+      return <div className=" font-medium">{formatted}</div>;
     },
   },
   {
     accessorKey: "stock",
-    header: () => <div className="text-right">Stock</div>,
+    header: ({ column }) => {
+      return (
+        <div
+          className="capitalize cursor-pointer flex items-center  gap-2"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Stock
+          <SortAsc className="w-4 h-4"/>
+        </div>
+      );
+    },
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue("price"));
 
-      // Format the amount as a dollar amount
       const formatted = new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: "USD",
       }).format(amount);
 
-      return <div className="text-right font-medium">{formatted}</div>;
+      return <div className="font-medium">{formatted}</div>;
     },
   },
 ];

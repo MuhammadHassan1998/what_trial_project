@@ -1,22 +1,20 @@
-export type FormData={
-  username:string;
-  password:string;
-}
-
-export type AuthContextType = {
-  user: null;
-  login: (formData:FormData) => void;
-  logout: () => void;
+export type FormData = {
+  username: string;
+  password: string;
 };
 
-
-
-export type User={
-  refreshToken:string;
-  accessToken:string;
+export type User = {
+  refreshToken: string;
+  accessToken: string;
   username: string;
-  email:string
-}
+  email: string;
+};
+
+export type AuthContextType = {
+  user: User | null;
+  login: (formData: FormData) => void;
+  logout: () => void;
+};
 
 
 export interface Product {
